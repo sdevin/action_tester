@@ -12,7 +12,7 @@ Module allowing to perform unitary action test
 #include <pr2motion/Gripper_Left_OperateAction.h>
 #include <pr2motion/InitAction.h>
 #include <pr2motion/connect_port.h>
-#include <pr2motion/Head_MoveAction.h>
+#include <pr2motion/Head_MoveTargetAction.h>
 #include <action_tester/ExecuteAction.h>
 #include <action_tester/ExecuteTask.h>
 #include "toaster_msgs/PutInHand.h"
