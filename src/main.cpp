@@ -38,7 +38,7 @@ actionlib::SimpleActionClient<pr2motion::Arm_Right_MoveAction>* PR2motion_arm_ri
 actionlib::SimpleActionClient<pr2motion::Arm_Left_MoveAction>* PR2motion_arm_left;
 actionlib::SimpleActionClient<pr2motion::Gripper_Right_OperateAction>* PR2motion_gripper_right;
 actionlib::SimpleActionClient<pr2motion::Gripper_Left_OperateAction>* PR2motion_gripper_left;
-actionlib::SimpleActionClient<pr2motion::Head_MoveAction>* head_action_client;
+actionlib::SimpleActionClient<pr2motion::Head_Move_TargetAction>* head_action_client;
 
 /*
 Find a plan with gtp and return the corresponding id (-1 if no solution found)
@@ -358,7 +358,7 @@ void lookAt(action_tester::ExecuteAction::Request  &req){
     }
 
     //we look at the object
-    pr2motion::Head_MoveGoal goal;
+    pr2motion::Head_Move_TargetGoal goal;
     goal.head_mode.value = 0;
     goal.head_target_frame = "map";
     goal.head_target_x = x;
@@ -432,7 +432,7 @@ int main (int argc, char **argv)
   PR2motion_gripper_right->waitForServer();
   PR2motion_gripper_left = new actionlib::SimpleActionClient<pr2motion::Gripper_Left_OperateAction>("pr2motion/Gripper_Left_Operate",true);
   PR2motion_gripper_left->waitForServer();
-  head_action_client = new actionlib::SimpleActionClient<pr2motion::Head_MoveAction>("pr2motion/Head_Move_Target",true);
+  head_action_client = new actionlib::SimpleActionClient<pr2motion::Head_Move_TargetAction>("pr2motion/Head_Move_Target",true);
   head_action_client->waitForServer();
 
   ROS_INFO("[action_tester] Init pr2motion");
