@@ -1,0 +1,5 @@
+<launch>
+        <rosparam command="load" file="$(find action_tester)/Parameters/ActionTester.yaml" />
+
+        <node name="action_tester" pkg="action_tester" type="action_tester" output="screen" />  <!-- Launch the action_tester node -->
+</launch>
