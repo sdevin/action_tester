@@ -10,6 +10,7 @@ Module allowing to perform unitary action test
 #include <pr2motion/Arm_Left_MoveAction.h>
 #include <pr2motion/Gripper_Right_OperateAction.h>
 #include <pr2motion/Gripper_Left_OperateAction.h>
+#include <pr2_controllers_msgs/Pr2GripperCommandAction.h>
 #include <pr2motion/InitAction.h>
 #include <pr2motion/connect_port.h>
 #include <pr2motion/Head_Move_TargetAction.h>
@@ -39,6 +40,8 @@ actionlib::SimpleActionClient<pr2motion::Arm_Left_MoveAction>* PR2motion_arm_lef
 actionlib::SimpleActionClient<pr2motion::Gripper_Right_OperateAction>* PR2motion_gripper_right;
 actionlib::SimpleActionClient<pr2motion::Gripper_Left_OperateAction>* PR2motion_gripper_left;
 actionlib::SimpleActionClient<pr2motion::Head_Move_TargetAction>* head_action_client;
+actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>* gripper_right;
+actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>* gripper_left;
 
 /*
 Find a plan with gtp and return the corresponding id (-1 if no solution found)
@@ -142,7 +145,7 @@ Function which open a gripper
 */
 void openGripper(int armId){
 
-    bool finishedBeforeTimeout;
+    /*bool finishedBeforeTimeout;
     if(armId == 0){//right arm
        pr2motion::Gripper_Right_OperateGoal gripper_goal;
        gripper_goal.goal_mode.value=pr2motion::pr2motion_GRIPPER_MODE::pr2motion_GRIPPER_OPEN;
@@ -159,8 +162,22 @@ void openGripper(int armId){
        if(!finishedBeforeTimeout){
          ROS_INFO("[action_executor] PR2motion Action did not finish before the time out.");
        }
+    }*/
+    
+    bool finishedBeforeTimeout;
+   pr2_controllers_msgs::Pr2GripperCommandGoal open_cmd;
+   open_cmd.command.position = 0.08;
+   open_cmd.command.max_effort = -1.0;
+   if(armId == 0){//right arm
+       gripper_right->sendGoal(open_cmd);
+       finishedBeforeTimeout = gripper_right->waitForResult(ros::Duration(waitActionServer));
+    }else{
+   gripper_left->sendGoal(open_cmd);
+       finishedBeforeTimeout = gripper_left->waitForResult(ros::Duration(waitActionServer));
     }
-
+    if(!finishedBeforeTimeout){
+      ROS_INFO("[action_executor] gripper Action did not finish before the time out.");
+    }
 
 }
 
@@ -169,7 +186,7 @@ Function which close a gripper
 */
 void closeGripper(int armId){
 
-    bool finishedBeforeTimeout;
+    /*bool finishedBeforeTimeout;
     if(armId == 0){//right arm
        pr2motion::Gripper_Right_OperateGoal gripper_goal;
        gripper_goal.goal_mode.value=pr2motion::pr2motion_GRIPPER_MODE::pr2motion_GRIPPER_CLOSE;
@@ -186,6 +203,21 @@ void closeGripper(int armId){
        if(!finishedBeforeTimeout){
          ROS_INFO("[action_executor] PR2motion Action did not finish before the time out.");
        }
+    }*/
+    
+    bool finishedBeforeTimeout;
+    pr2_controllers_msgs::Pr2GripperCommandGoal open_cmd;
+   open_cmd.command.position = 0.0;
+   open_cmd.command.max_effort = -1.0;
+   if(armId == 0){//right arm
+       gripper_right->sendGoal(open_cmd);
+       finishedBeforeTimeout = gripper_right->waitForResult(ros::Duration(waitActionServer));
+    }else{
+   gripper_left->sendGoal(open_cmd);
+       finishedBeforeTimeout = gripper_left->waitForResult(ros::Duration(waitActionServer));
+    }
+    if(!finishedBeforeTimeout){
+      ROS_INFO("[action_executor] gripper Action did not finish before the time out.");
     }
 
 
@@ -434,6 +466,13 @@ int main (int argc, char **argv)
   PR2motion_gripper_left->waitForServer();
   head_action_client = new actionlib::SimpleActionClient<pr2motion::Head_Move_TargetAction>("pr2motion/Head_Move_Target",true);
   head_action_client->waitForServer();
+  
+  ROS_INFO("[action_tester] Waiting for gripper action server");
+  gripper_right = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>("r_gripper_sensor_controller/gripper_action", true);
+  gripper_right->waitForServer();
+  gripper_left = new actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction>("l_gripper_sensor_controller/gripper_action", true);
+  gripper_left->waitForServer();
+ 
 
   ROS_INFO("[action_tester] Init pr2motion");
   ros::ServiceClient connect = node->serviceClient<pr2motion::connect_port>("pr2motion/connect_port");
