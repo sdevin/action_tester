@@ -63,6 +63,8 @@ pkg_check_modules(pr2motion-genom3 REQUIRED pr2motion-genom3)
    FILES
    ExecuteAction.srv
    ExecuteTask.srv
+   ExecuteSubTraj.srv
+   ControlGripper.srv
  )
 
 ## Generate actions in the 'action' folder

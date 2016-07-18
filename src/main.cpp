@@ -16,6 +16,8 @@ Module allowing to perform unitary action test
 #include <pr2motion/Head_Move_TargetAction.h>
 #include <action_tester/ExecuteAction.h>
 #include <action_tester/ExecuteTask.h>
+#include <action_tester/ControlGripper.h>
+#include <action_tester/ExecuteSubTraj.h>
 #include "toaster_msgs/PutInHand.h"
 #include "toaster_msgs/RemoveFromHand.h"
 #include "toaster_msgs/ObjectListStamped.h"
@@ -423,6 +425,33 @@ bool execAction(action_tester::ExecuteAction::Request  &req, action_tester::Exec
     return true;
 }
 
+/*
+Service call to execute an action
+*/
+bool execSubTraj(action_tester::ExecuteSubTraj::Request  &req, action_tester::ExecuteSubTraj::Response &res){
+
+    executeTrajectory(req.actionId, req.actionSubId, req.armId);
+
+    ROS_INFO("[action_tester] Subtraj executed: id = %d %d", req.actionId, req.actionSubId);
+
+    return true;
+}
+
+/*
+Service call to execute an action
+*/
+bool controlGripper(action_tester::ControlGripper::Request  &req, action_tester::ControlGripper::Response &res){
+
+    if(req.open){
+        openGripper(req.armId);
+    }else{
+        closeGripper(req.armId);
+    }
+
+    return true;
+}
+
+
 
 /*
 Service call to execute a gtp task
@@ -446,6 +475,7 @@ int main (int argc, char **argv)
   //Services declarations
   ros::ServiceServer service_action = _node.advertiseService("action_tester/execute_action", execAction);
   ros::ServiceServer service_task = _node.advertiseService("action_tester/execute_gtp_task", execTask);
+  ros::ServiceServer service_subtraj = _node.advertiseService("action_tester/execute_subtraj", execSubTraj);
 
   node->getParam("/robot/name", robotName);
   node->getParam("/waitActionServer", waitActionServer);
