@@ -451,6 +451,20 @@ bool controlGripper(action_tester::ControlGripper::Request  &req, action_tester:
     return true;
 }
 
+/*
+Service call to execute an action
+*/
+bool planService(action_tester::ExecuteAction::Request  &req, action_tester::ExecuteAction::Response &res){
+
+    lookAt(req);
+    int gtpId = planGTP(req);
+
+    ROS_INFO("[action_tester] Action planned: id = %d", gtpId);
+
+    return true;
+}
+
+
 
 
 /*
@@ -476,6 +490,8 @@ int main (int argc, char **argv)
   ros::ServiceServer service_action = _node.advertiseService("action_tester/execute_action", execAction);
   ros::ServiceServer service_task = _node.advertiseService("action_tester/execute_gtp_task", execTask);
   ros::ServiceServer service_subtraj = _node.advertiseService("action_tester/execute_subtraj", execSubTraj);
+  ros::ServiceServer service_gripper = _node.advertiseService("action_tester/control_gripper", controlGripper);
+  ros::ServiceServer service_plan = _node.advertiseService("action_tester/plan", planService);
 
   node->getParam("/robot/name", robotName);
   node->getParam("/waitActionServer", waitActionServer);
