@@ -13,7 +13,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-  supervisor_msgs
 )
 
 pkg_check_modules(pr2motion-genom3 REQUIRED pr2motion-genom3)
@@ -112,7 +111,7 @@ pkg_check_modules(pr2motion-genom3 REQUIRED pr2motion-genom3)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES mental_states
-   CATKIN_DEPENDS actionlib actionlib_msgs toaster_msgs roscpp rospy std_msgs supervisor_msgs
+   CATKIN_DEPENDS actionlib actionlib_msgs toaster_msgs roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
 
@@ -196,7 +195,7 @@ target_link_libraries(
   ${catkin_LIBRARIES}
    ${pr2motion-genom3_LIBRARIES}
 )
-add_dependencies(action_tester supervisor_msgs_generate_messages_cpp)
+add_dependencies(action_tester action_tester_generate_messages_cpp)
 
 #############
 ## Testing ##
